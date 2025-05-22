@@ -7,6 +7,9 @@ builder.Services.AddEndpointsApiExplorer();
  builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 var app = builder.Build();
 
@@ -15,7 +18,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapOpenApi();
+    //app.MapOpenApi();
 
 }
 app.UseHttpsRedirection();
