@@ -1,3 +1,6 @@
+using BackEnd.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,11 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
  builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
+
+// Register DbContext with PostgreSQL
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
