@@ -41,8 +41,10 @@ namespace BackEnd.Models
         public string Language { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string Category { get; set; }
+        public Guid CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
 
         [Required]
         public int StockQuantity { get; set; }
