@@ -1,4 +1,3 @@
-
 using BackEnd.Data;
 using BackEnd.Models;
 using Microsoft.AspNetCore.JsonPatch;
@@ -17,7 +16,6 @@ namespace BackEnd.Controllers
             _context = applicationDbContext;
         }
 
-
         [HttpGet]
         public IActionResult GetAllBooks()
         {
@@ -30,11 +28,10 @@ namespace BackEnd.Controllers
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
-        [HttpGet("{id:int}")]
-        public IActionResult GetOneBook([FromRoute(Name = "id")] int id)
+        [HttpGet("{id:guid}")]
+        public IActionResult GetOneBook([FromRoute(Name = "id")] Guid id)
         {
             try
             {
@@ -50,15 +47,15 @@ namespace BackEnd.Controllers
                 throw new Exception(ex.Message);
             }
         }
+
         [HttpPost]
         public IActionResult CreateOneBook([FromBody] Book book)
         {
             try
             {
-
                 if (book is null)
                 {
-                    return NotFound(); // 404
+                    return BadRequest(); // 400
                 }
                 _context.Books.Add(book);
                 _context.SaveChanges();
@@ -69,8 +66,9 @@ namespace BackEnd.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody] Book book)
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateOneBook([FromRoute(Name = "id")] Guid id, [FromBody] Book book)
         {
             try
             {
@@ -82,20 +80,31 @@ namespace BackEnd.Controllers
                 {
                     return BadRequest();
                 }
+
                 entity.Title = book.Title;
+                entity.Author = book.Author;
+                entity.ISBN = book.ISBN;
                 entity.Price = book.Price;
+                entity.PublicationDate = book.PublicationDate;
+                entity.Description = book.Description;
+                entity.PageCount = book.PageCount;
+                entity.Language = book.Language;
+                entity.Category = book.Category;
+                entity.StockQuantity = book.StockQuantity;
+                entity.CoverImageUrl = book.CoverImageUrl;
+                entity.UpdatedAt = DateTime.UtcNow;
+
                 _context.SaveChanges();
                 return Ok(book);
             }
-
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
         }
-        [HttpDelete("{id:int}")]
-        public IActionResult DeleteOneBooks([FromRoute(Name = "id")] int id)
+
+        [HttpDelete("{id:guid}")]
+        public IActionResult DeleteOneBook([FromRoute(Name = "id")] Guid id)
         {
             try
             {
@@ -114,11 +123,12 @@ namespace BackEnd.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        [HttpPatch("{id:int}")]
-        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
+
+        [HttpPatch("{id:guid}")]
+        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] Guid id,
         [FromBody] JsonPatchDocument<Book> bookPatch)
         {
-             try
+            try
             {
                 var entity = _context.Books.Where(b => b.Id.Equals(id)).SingleOrDefault();
 
@@ -127,6 +137,7 @@ namespace BackEnd.Controllers
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
+                entity.UpdatedAt = DateTime.UtcNow;
                 _context.SaveChanges();
                 return NoContent();
             }
@@ -135,6 +146,5 @@ namespace BackEnd.Controllers
                 throw new Exception(ex.Message);
             }
         }
-
     }
 }
