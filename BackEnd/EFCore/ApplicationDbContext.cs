@@ -1,7 +1,7 @@
 using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BackEnd.Repositories.EFCore
+namespace BackEnd.EFCore
 {
     public class ApplicationDbContext : DbContext
     {
@@ -27,4 +27,4 @@ namespace BackEnd.Repositories.EFCore
             });
         }
     }
-}
+} 

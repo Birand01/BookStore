@@ -1,4 +1,4 @@
-using BackEnd.Data;
+using BackEnd.Repositories.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,13 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
- builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 // Register DbContext with PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -27,7 +26,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.MapOpenApi();
-
 }
 app.UseHttpsRedirection();
 app.UseAuthorization();
