@@ -1,33 +1,35 @@
 using BackEnd.Repositories.Contracts;
-
+using BackEnd.Repositories.EFCore;
+using Microsoft.EntityFrameworkCore;
 namespace BackEnd.Repositories
 {
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        public void Create(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        protected readonly ApplicationDbContext _context;
 
-        public void Delete(T entity)
+        public RepositoryBase(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
+        public void Create(T entity)=>_context.Set<T>().Add(entity);
+
+        public void Delete(T entity)=>_context.Set<T>().Remove(entity);
 
         public IQueryable<T> FindAll(bool trackChanges)
         {
-            throw new NotImplementedException();
+            return !trackChanges ?
+            _context.Set<T>()
+            .AsNoTracking()
+            : _context.Set<T>();
         }
 
         public IQueryable<T> FindByCondition(System.Linq.Expressions.Expression<Func<T, bool>> expression, bool trackChanges)
         {
-            throw new NotImplementedException();
+            return !trackChanges ?
+            _context.Set<T>().Where(expression).AsNoTracking(): _context.Set<T>().Where(expression);
         }
 
-        public void Update(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        public void Update(T entity)=>_context.Set<T>().Update(entity);
 
     }
 }
