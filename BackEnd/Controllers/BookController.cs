@@ -30,8 +30,8 @@ namespace BackEnd.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")]
-        public IActionResult GetOneBook([FromRoute(Name = "id")] Guid id)
+        [HttpGet("{id:int}")]
+        public IActionResult GetOneBook([FromRoute(Name = "id")] int id)
         {
             try
             {
@@ -67,8 +67,8 @@ namespace BackEnd.Controllers
             }
         }
 
-        [HttpPut("{id:guid}")]
-        public IActionResult UpdateOneBook([FromRoute(Name = "id")] Guid id, [FromBody] Book book)
+        [HttpPut("{id:int}")]
+        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody] Book book)
         {
             try
             {
@@ -82,17 +82,7 @@ namespace BackEnd.Controllers
                 }
 
                 entity.Title = book.Title;
-                entity.Author = book.Author;
-                entity.ISBN = book.ISBN;
                 entity.Price = book.Price;
-                entity.PublicationDate = book.PublicationDate;
-                entity.Description = book.Description;
-                entity.PageCount = book.PageCount;
-                entity.Language = book.Language;
-                entity.Category = book.Category;
-                entity.StockQuantity = book.StockQuantity;
-                entity.CoverImageUrl = book.CoverImageUrl;
-                entity.UpdatedAt = DateTime.UtcNow;
 
                 _context.SaveChanges();
                 return Ok(book);
@@ -103,8 +93,8 @@ namespace BackEnd.Controllers
             }
         }
 
-        [HttpDelete("{id:guid}")]
-        public IActionResult DeleteOneBook([FromRoute(Name = "id")] Guid id)
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteOneBook([FromRoute(Name = "id")] int id)
         {
             try
             {
@@ -124,8 +114,8 @@ namespace BackEnd.Controllers
             }
         }
 
-        [HttpPatch("{id:guid}")]
-        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] Guid id,
+        [HttpPatch("{id:int}")]
+        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
         [FromBody] JsonPatchDocument<Book> bookPatch)
         {
             try
@@ -137,7 +127,6 @@ namespace BackEnd.Controllers
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
-                entity.UpdatedAt = DateTime.UtcNow;
                 _context.SaveChanges();
                 return NoContent();
             }
