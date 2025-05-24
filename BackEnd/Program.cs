@@ -1,3 +1,4 @@
+using BackEnd.Extensions;
 using BackEnd.Repositories.EFCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
-// Register DbContext with PostgreSQL
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.ConfigurePostgresContext(builder.Configuration);
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
