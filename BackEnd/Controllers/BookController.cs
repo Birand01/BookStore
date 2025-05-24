@@ -3,6 +3,7 @@ using BackEnd.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
+using BackEnd.Repositories.Contracts;
 
 namespace BackEnd.Controllers
 {
@@ -10,10 +11,10 @@ namespace BackEnd.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        public BookController(ApplicationDbContext applicationDbContext)
+        private readonly IRepositoryManager _manager;
+        public BookController(IRepositoryManager manager)
         {
-            _context = applicationDbContext;
+            _manager = manager;
         }
 
         [HttpGet]
@@ -21,7 +22,7 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var books = _context.Books.ToList();
+                var books = _manager.Book.GetAllBooks(false);
                 return Ok(books);
             }
             catch (Exception ex)
@@ -35,7 +36,7 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var book = _context.Books.Where(b => b.Id.Equals(id)).SingleOrDefault();
+                var book = _manager.Book.GetOneBookById(id, false);
                 if (book is null)
                 {
                     return NotFound(); // 404
@@ -57,8 +58,8 @@ namespace BackEnd.Controllers
                 {
                     return BadRequest(); // 400
                 }
-                _context.Books.Add(book);
-                _context.SaveChanges();
+                _manager.Book.CreateOneBook(book);
+                _manager.Save();
                 return StatusCode(201, book);
             }
             catch (Exception ex)
@@ -72,7 +73,7 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity = _context.Books.Where(b => b.Id.Equals(id)).SingleOrDefault();
+                var entity = _manager.Book.GetOneBookById(id, true);
                 if (entity is null)
                     return NotFound();
 
@@ -84,7 +85,7 @@ namespace BackEnd.Controllers
                 entity.Title = book.Title;
                 entity.Price = book.Price;
 
-                _context.SaveChanges();
+                _manager.Save();
                 return Ok(book);
             }
             catch (Exception ex)
@@ -98,14 +99,14 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity = _context.Books.Where(b => b.Id.Equals(id)).SingleOrDefault();
+                var entity =_manager.Book.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
                     return NotFound();
                 }
-                _context.Books.Remove(entity);
-                _context.SaveChanges();
+                _manager.Book.DeleteOneBook(entity);
+                _manager.Save();
                 return NoContent();
             }
             catch (Exception ex)
@@ -120,14 +121,14 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity = _context.Books.Where(b => b.Id.Equals(id)).SingleOrDefault();
+                var entity = _manager.Book.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
-                _context.SaveChanges();
+                _manager.Save();
                 return NoContent();
             }
             catch (Exception ex)
