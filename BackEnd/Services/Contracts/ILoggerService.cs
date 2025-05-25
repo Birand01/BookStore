@@ -1,6 +1,6 @@
 namespace BackEnd.Services.Contracts
 {
-    public interface ILogger
+    public interface ILoggerService
     {
         void LogInfo(string message);
         void LogWarn(string message);
