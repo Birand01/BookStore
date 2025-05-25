@@ -5,6 +5,7 @@ using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace BackEnd.Extensions
 {
     public static class ServicesExtentions
@@ -23,6 +24,7 @@ namespace BackEnd.Extensions
         public static void ConfigureServiceManager(this IServiceCollection services)
         {
             services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddSingleton<ILoggerService, LoggerManager>();
         }
     }
 }

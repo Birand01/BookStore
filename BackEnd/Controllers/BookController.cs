@@ -13,9 +13,12 @@ namespace BackEnd.Controllers
     public class BookController : ControllerBase
     {
         private readonly IServiceManager _manager;
-        public BookController(IServiceManager manager)
+        private readonly ILoggerService _logger;
+
+        public BookController(IServiceManager manager, ILoggerService logger)
         {
             _manager = manager;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -23,11 +26,13 @@ namespace BackEnd.Controllers
         {
             try
             {
+                _logger.LogInfo("Getting all books");
                 var books = _manager.BookService.GetAllBooks(false);
                 return Ok(books);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in GetAllBooks: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
@@ -37,15 +42,18 @@ namespace BackEnd.Controllers
         {
             try
             {
+                _logger.LogInfo($"Getting book with id: {id}");
                 var book = _manager.BookService.GetOneBookById(id, false);
                 if (book is null)
                 {
-                    return NotFound(); // 404
+                    _logger.LogWarn($"Book with id {id} not found");
+                    return NotFound();
                 }
                 return Ok(book);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in GetOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
@@ -55,15 +63,19 @@ namespace BackEnd.Controllers
         {
             try
             {
+                _logger.LogInfo("Creating new book");
                 if (book is null)
                 {
-                    return BadRequest(); // 400
+                    _logger.LogWarn("Attempted to create null book");
+                    return BadRequest();
                 }
                 _manager.BookService.CreateOneBook(book);
+                _logger.LogInfo($"Book created successfully with id: {book.Id}");
                 return StatusCode(201, book);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in CreateOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
@@ -73,15 +85,19 @@ namespace BackEnd.Controllers
         {
             try
             {
+                _logger.LogInfo($"Updating book with id: {id}");
                 if(book is null)
                 {
+                    _logger.LogWarn("Attempted to update with null book");
                     return BadRequest();
                 }
-                _manager.BookService.UpdateOneBook(id,book,true);
-                return NoContent();//204
+                _manager.BookService.UpdateOneBook(id, book, true);
+                _logger.LogInfo($"Book with id {id} updated successfully");
+                return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in UpdateOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
@@ -91,21 +107,24 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity =_manager.BookService.GetOneBookById(id, true);
+                _logger.LogInfo($"Deleting book with id: {id}");
+                var entity = _manager.BookService.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
+                    _logger.LogWarn($"Book with id {id} not found for deletion");
                     return NotFound();
                 }
-                _manager.BookService.DeleteOneBook(id,true);
+                _manager.BookService.DeleteOneBook(id, true);
+                _logger.LogInfo($"Book with id {id} deleted successfully");
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in DeleteOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }
-
 
         [HttpPatch("{id:int}")]
         public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
@@ -113,18 +132,22 @@ namespace BackEnd.Controllers
         {
             try
             {
+                _logger.LogInfo($"Partially updating book with id: {id}");
                 var entity = _manager.BookService.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
+                    _logger.LogWarn($"Book with id {id} not found for partial update");
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
-                _manager.BookService.UpdateOneBook(id,entity,true);
+                _manager.BookService.UpdateOneBook(id, entity, true);
+                _logger.LogInfo($"Book with id {id} partially updated successfully");
                 return NoContent();
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error in PartiallyUpdateOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
             }
         }

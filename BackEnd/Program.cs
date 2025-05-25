@@ -22,6 +22,9 @@ builder.Services.ConfigureRepositoryManager();
 // Register Service Manager
 builder.Services.ConfigureServiceManager(); 
 
+// Register Logger
+builder.Services.AddSingleton<ILoggerService, LoggerManager>();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
