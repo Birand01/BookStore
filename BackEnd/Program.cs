@@ -14,6 +14,7 @@ builder.Services.AddControllers(config=>{
     config.RespectBrowserAcceptHeader=true;//accept header
     config.ReturnHttpNotAcceptable=true; //return 406 not acceptable if the client request is not acceptable
 })
+.AddCustomCsvFormatter()
 .AddXmlDataContractSerializerFormatters()
 .AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();

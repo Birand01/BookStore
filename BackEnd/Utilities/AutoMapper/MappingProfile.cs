@@ -8,6 +8,7 @@ namespace BackEnd.Utilities.AutoMapper
     {
         public MappingProfile()
         {
+            CreateMap<Book, BookDto>();
             CreateMap<BookDtoForUpdate, Book>();
         }
     }
