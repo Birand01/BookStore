@@ -1,3 +1,5 @@
+using AutoMapper;
+using BackEnd.DTO;
 using BackEnd.Models;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Services.Contracts;
@@ -8,11 +10,13 @@ namespace BackEnd.Services.Managers
     {
         private readonly IRepositoryManager _manager;
         private readonly ILoggerService _logger;
+        private readonly IMapper _mapper;
 
-        public BookManager(IRepositoryManager manager, ILoggerService logger)
+        public BookManager(IRepositoryManager manager, ILoggerService logger, IMapper mapper)
         {
             _manager = manager;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public Book CreateOneBook(Book book)
@@ -52,19 +56,19 @@ namespace BackEnd.Services.Managers
             return book;
         }
 
-        public void UpdateOneBook(int id, Book book,bool trackChanges)
+        public void UpdateOneBook(int id, BookDtoForUpdate bookDtoForUpdate,bool trackChanges)
         {
             var entity=_manager.Book.GetOneBookById(id,trackChanges);
             if(entity is null)
             {
                 throw new Exception($"Book with id:{id} could not found.");
             }
-            if(book is null)
+            if(bookDtoForUpdate is null)
             {
-                throw new ArgumentNullException(nameof(book));
+                throw new ArgumentNullException(nameof(bookDtoForUpdate));
             }
-            entity.Title=book.Title;
-            entity.Price=book.Price;
+            //map the dto to the entity
+            _mapper.Map(bookDtoForUpdate,entity);
             _manager.Book.Update(entity);
             _manager.Save();
         }

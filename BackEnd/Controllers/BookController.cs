@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Services.Contracts;
+using BackEnd.DTO;
 
 namespace BackEnd.Controllers
 {
@@ -81,17 +82,18 @@ namespace BackEnd.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, [FromBody] Book book)
+        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, 
+        [FromBody] BookDtoForUpdate bookDtoForUpdate)
         {
             try
             {
                 _logger.LogInfo($"Updating book with id: {id}");
-                if(book is null)
+                if(bookDtoForUpdate is null)
                 {
                     _logger.LogWarn("Attempted to update with null book");
                     return BadRequest();
                 }
-                _manager.BookService.UpdateOneBook(id, book, true);
+                _manager.BookService.UpdateOneBook(id, bookDtoForUpdate, true);
                 _logger.LogInfo($"Book with id {id} updated successfully");
                 return NoContent();
             }
@@ -141,7 +143,7 @@ namespace BackEnd.Controllers
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
-                _manager.BookService.UpdateOneBook(id, entity, true);
+                _manager.BookService.UpdateOneBook(id, new BookDtoForUpdate(entity.Id,entity.Title,entity.Price), true);
                 _logger.LogInfo($"Book with id {id} partially updated successfully");
                 return NoContent();
             }
