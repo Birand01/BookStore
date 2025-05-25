@@ -14,6 +14,8 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
+
+// Register AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.ConfigurePostgresContext(builder.Configuration);
