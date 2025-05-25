@@ -16,7 +16,9 @@ builder.Services.AddOpenApi();
 builder.Services.ConfigurePostgresContext(builder.Configuration);
 
 // Register Repository Manager
-builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+builder.Services.ConfigureRepositoryManager();
+// Register Service Manager
+builder.Services.ConfigureServiceManager();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
