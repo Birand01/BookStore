@@ -1,11 +1,11 @@
-using BackEnd.EFCore;
+using BackEnd.Repositories.EFCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Extensions
 {
     public static class ServicesExtentions
     {
-        public static void ConfigurePostgresContext(this IServiceCollection services,IConfiguration configuration)
+        public static void ConfigurePostgresContext(this IServiceCollection services, IConfiguration configuration)
         {
             // Register DbContext with PostgreSQL
             services.AddDbContext<ApplicationDbContext>(options =>
