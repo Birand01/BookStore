@@ -10,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers(config=>{
+    config.RespectBrowserAcceptHeader=true;//accept header
+    config.ReturnHttpNotAcceptable=true; //return 406 not acceptable if the client request is not acceptable
+}).AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
