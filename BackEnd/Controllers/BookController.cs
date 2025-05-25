@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Extensions;
 using BackEnd.Repositories.Contracts;
+using BackEnd.Services.Contracts;
 
 namespace BackEnd.Controllers
 {
@@ -11,8 +12,8 @@ namespace BackEnd.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly IRepositoryManager _manager;
-        public BookController(IRepositoryManager manager)
+        private readonly IServiceManager _manager;
+        public BookController(IServiceManager manager)
         {
             _manager = manager;
         }
@@ -22,7 +23,7 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var books = _manager.Book.GetAllBooks(false);
+                var books = _manager.BookService.GetAllBooks(false);
                 return Ok(books);
             }
             catch (Exception ex)
@@ -36,7 +37,7 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var book = _manager.Book.GetOneBookById(id, false);
+                var book = _manager.BookService.GetOneBookById(id, false);
                 if (book is null)
                 {
                     return NotFound(); // 404
@@ -58,8 +59,7 @@ namespace BackEnd.Controllers
                 {
                     return BadRequest(); // 400
                 }
-                _manager.Book.CreateOneBook(book);
-                _manager.Save();
+                _manager.BookService.CreateOneBook(book);
                 return StatusCode(201, book);
             }
             catch (Exception ex)
@@ -73,20 +73,12 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity = _manager.Book.GetOneBookById(id, true);
-                if (entity is null)
-                    return NotFound();
-
-                if (id != book.Id)
+                if(book is null)
                 {
                     return BadRequest();
                 }
-
-                entity.Title = book.Title;
-                entity.Price = book.Price;
-
-                _manager.Save();
-                return Ok(book);
+                _manager.BookService.UpdateOneBook(id,book,true);
+                return NoContent();//204
             }
             catch (Exception ex)
             {
@@ -99,14 +91,13 @@ namespace BackEnd.Controllers
         {
             try
             {
-                var entity =_manager.Book.GetOneBookById(id, true);
+                var entity =_manager.BookService.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
                     return NotFound();
                 }
-                _manager.Book.DeleteOneBook(entity);
-                _manager.Save();
+                _manager.BookService.DeleteOneBook(id,true);
                 return NoContent();
             }
             catch (Exception ex)
@@ -115,20 +106,21 @@ namespace BackEnd.Controllers
             }
         }
 
+
         [HttpPatch("{id:int}")]
         public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
         [FromBody] JsonPatchDocument<Book> bookPatch)
         {
             try
             {
-                var entity = _manager.Book.GetOneBookById(id, true);
+                var entity = _manager.BookService.GetOneBookById(id, true);
 
                 if (entity is null)
                 {
                     return NotFound();
                 }
                 bookPatch.ApplyTo(entity);
-                _manager.Save();
+                _manager.BookService.UpdateOneBook(id,entity,true);
                 return NoContent();
             }
             catch (Exception ex)
