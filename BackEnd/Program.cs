@@ -2,6 +2,8 @@ using BackEnd.Extensions;
 using BackEnd.Repositories.EFCore;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Repositories;
+using BackEnd.Services.Contracts;
+using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +20,7 @@ builder.Services.ConfigurePostgresContext(builder.Configuration);
 // Register Repository Manager
 builder.Services.ConfigureRepositoryManager();
 // Register Service Manager
-builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureServiceManager(); 
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

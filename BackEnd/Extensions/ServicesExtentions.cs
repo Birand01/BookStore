@@ -1,4 +1,8 @@
+using BackEnd.Repositories;
+using BackEnd.Repositories.Contracts;
 using BackEnd.Repositories.EFCore;
+using BackEnd.Services.Contracts;
+using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Extensions
@@ -10,6 +14,15 @@ namespace BackEnd.Extensions
             // Register DbContext with PostgreSQL
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        }
+        public static void ConfigureRepositoryManager(this IServiceCollection services)
+        {
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
+        }
+
+        public static void ConfigureServiceManager(this IServiceCollection services)
+        {
+            services.AddScoped<IServiceManager, ServiceManager>();
         }
     }
 }
