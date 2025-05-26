@@ -7,6 +7,7 @@ using BackEnd.Repositories.Contracts;
 using BackEnd.Services.Contracts;
 using BackEnd.DTO;
 using BackEnd.ActionFilters;
+using BackEnd.RequestFeatures;
 
 namespace BackEnd.Controllers
 {
@@ -24,12 +25,12 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllBooks()
+        public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
             try
             {
                 _logger.LogInfo("Getting all books");
-                var books = await _manager.BookService.GetAllBooksAsync(false);
+                var books = await _manager.BookService.GetAllBooksAsync(bookParameters,false);
                 return Ok(books);
             }
             catch (Exception ex)

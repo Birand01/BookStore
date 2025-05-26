@@ -2,6 +2,7 @@ using BackEnd.Repositories.EFCore;
 using BackEnd.Models;
 using BackEnd.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
+using BackEnd.RequestFeatures;
 
 namespace BackEnd.Repositories
 {
@@ -13,9 +14,11 @@ namespace BackEnd.Repositories
 
         public void DeleteOneBook(Book book)=>Delete(book);
 
-        public async Task<IEnumerable<Book>> GetAllBooksAsync(bool trackChanges)=>
+        public async Task<IEnumerable<Book>> GetAllBooksAsync(BookParameters bookParameters,bool trackChanges)=>
         await FindAll(trackChanges)
         .OrderBy(b=>b.Id)
+        .Skip((bookParameters.PageNumber-1)*bookParameters.PageSize)
+        .Take(bookParameters.PageSize)
         .ToListAsync();
 
         public async Task<Book> GetOneBookByIdAsync(int id, bool trackChanges)=>

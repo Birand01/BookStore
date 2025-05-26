@@ -1,10 +1,11 @@
 using BackEnd.Models;
+using BackEnd.RequestFeatures;
 
 namespace BackEnd.Repositories.Contracts
 {
     public interface IBookRepository:IRepositoryBase<Book>
     {
-        Task<IEnumerable<Book>> GetAllBooksAsync(bool trackChanges);
+        Task<IEnumerable<Book>> GetAllBooksAsync(BookParameters bookParameters,bool trackChanges);
         Task<Book> GetOneBookByIdAsync(int id,bool trackChanges);
         void CreateOneBook(Book book);
         void UpdateOneBook(Book book);

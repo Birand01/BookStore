@@ -2,6 +2,7 @@ using AutoMapper;
 using BackEnd.DTO;
 using BackEnd.Models;
 using BackEnd.Repositories.Contracts;
+using BackEnd.RequestFeatures;
 using BackEnd.Services.Contracts;
 
 namespace BackEnd.Services.Managers
@@ -42,9 +43,9 @@ namespace BackEnd.Services.Managers
             await _manager.SaveAsync();
         }
 
-        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(bool trackChanges)
+        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(BookParameters bookParameters,bool trackChanges)
         {
-            var books=await _manager.Book.GetAllBooksAsync(trackChanges);
+            var books=await _manager.Book.GetAllBooksAsync(bookParameters,trackChanges);
             var booksDto=_mapper.Map<IEnumerable<BookDto>>(books);
             return booksDto;
         }
