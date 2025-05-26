@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers(config=>{
     config.RespectBrowserAcceptHeader=true;//accept header
-    config.ReturnHttpNotAcceptable=true; //return 406 not acceptable if the client request is not acceptable
+    config.ReturnHttpNotAcceptable=false; //return 406 not acceptable if the client request is not acceptable
 })
 //.AddCustomCsvFormatter()
 //.AddXmlDataContractSerializerFormatters()
