@@ -19,46 +19,49 @@ namespace BackEnd.Services.Managers
             _mapper = mapper;
         }
 
-        public Book CreateOneBook(Book book)
+        public async Task<BookDto> CreateOneBookAsync(BookDtoForInsertion bookDtoForCreation)
         {
-            if(book is null)
+            if(bookDtoForCreation is null)
             {
-                throw new ArgumentNullException(nameof(book));
+                throw new ArgumentNullException(nameof(bookDtoForCreation));
             }
-            _manager.Book.CreateOneBook(book);
-            _manager.Save();
-            return book;
+            var entity=_mapper.Map<Book>(bookDtoForCreation);
+            _manager.Book.CreateOneBook(entity);
+            await _manager.SaveAsync();
+            return _mapper.Map<BookDto>(entity);
         }
 
-        public void DeleteOneBook(int id, bool trackChanges)
+        public async Task DeleteOneBookAsync(int id, bool trackChanges)
         {
-            var book=_manager.Book.GetOneBookById(id,trackChanges);
+            var book=await _manager.Book.GetOneBookByIdAsync(id,trackChanges);
             if(book is null)
             {
                 throw new Exception($"Book with id:{id} could not found.");
             }
             _manager.Book.DeleteOneBook(book);
-            _manager.Save();
+            await _manager.SaveAsync();
         }
 
-        public IEnumerable<Book> GetAllBooks(bool trackChanges)
+        public async Task<IEnumerable<BookDto>> GetAllBooksAsync(bool trackChanges)
         {
-            return _manager.Book.GetAllBooks(trackChanges);
+            var books=await _manager.Book.GetAllBooksAsync(trackChanges);
+            var booksDto=_mapper.Map<IEnumerable<BookDto>>(books);
+            return booksDto;
         }
 
-        public Book GetOneBookById(int id, bool trackChanges)
+        public async Task<BookDto> GetOneBookByIdAsync(int id, bool trackChanges)
         {
-            var book=_manager.Book.GetOneBookById(id,trackChanges);
+            var book=await _manager.Book.GetOneBookByIdAsync(id,trackChanges);
             if(book is null)
             {
                 throw new Exception($"Book with id:{id} could not found.");
             }
-            return book;
+            return _mapper.Map<BookDto>(book);
         }
 
-        public void UpdateOneBook(int id, BookDtoForUpdate bookDtoForUpdate,bool trackChanges)
+        public async Task UpdateOneBookAsync(int id, BookDtoForUpdate bookDtoForUpdate,bool trackChanges)
         {
-            var entity=_manager.Book.GetOneBookById(id,trackChanges);
+            var entity=await _manager.Book.GetOneBookByIdAsync(id,trackChanges);
             if(entity is null)
             {
                 throw new Exception($"Book with id:{id} could not found.");
@@ -70,7 +73,7 @@ namespace BackEnd.Services.Managers
             //map the dto to the entity
             _mapper.Map(bookDtoForUpdate,entity);
             _manager.Book.Update(entity);
-            _manager.Save();
+            await _manager.SaveAsync();
         }
 
     }

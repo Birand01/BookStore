@@ -23,12 +23,12 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllBooks()
+        public async Task<IActionResult> GetAllBooks()
         {
             try
             {
                 _logger.LogInfo("Getting all books");
-                var books = _manager.BookService.GetAllBooks(false);
+                var books = await _manager.BookService.GetAllBooksAsync(false);
                 return Ok(books);
             }
             catch (Exception ex)
@@ -39,12 +39,12 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult GetOneBook([FromRoute(Name = "id")] int id)
+        public async Task<IActionResult> GetOneBook([FromRoute(Name = "id")] int id)
         {
             try
             {
                 _logger.LogInfo($"Getting book with id: {id}");
-                var book = _manager.BookService.GetOneBookById(id, false);
+                var book = await _manager.BookService.GetOneBookByIdAsync(id, false);
                 if (book is null)
                 {
                     _logger.LogWarn($"Book with id {id} not found");
@@ -60,19 +60,19 @@ namespace BackEnd.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOneBook([FromBody] Book book)
+        public async Task<IActionResult> CreateOneBook([FromBody] BookDtoForInsertion bookDtoForInsertion)
         {
             try
             {
                 _logger.LogInfo("Creating new book");
-                if (book is null)
+                if (bookDtoForInsertion is null)
                 {
                     _logger.LogWarn("Attempted to create null book");
                     return BadRequest();
                 }
-                _manager.BookService.CreateOneBook(book);
-                _logger.LogInfo($"Book created successfully with id: {book.Id}");
-                return StatusCode(201, book);
+                var bookDto=_manager.BookService.CreateOneBookAsync(bookDtoForInsertion);
+                _logger.LogInfo($"Book created successfully with id: {bookDto.Id}");
+                return StatusCode(201, bookDto);
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateOneBook([FromRoute(Name = "id")] int id, 
+        public async Task<IActionResult> UpdateOneBook([FromRoute(Name = "id")] int id, 
         [FromBody] BookDtoForUpdate bookDtoForUpdate)
         {
             try
@@ -93,7 +93,7 @@ namespace BackEnd.Controllers
                     _logger.LogWarn("Attempted to update with null book");
                     return BadRequest();
                 }
-                _manager.BookService.UpdateOneBook(id, bookDtoForUpdate, true);
+                await _manager.BookService.UpdateOneBookAsync(id, bookDtoForUpdate, true);
                 _logger.LogInfo($"Book with id {id} updated successfully");
                 return NoContent();
             }
@@ -105,19 +105,19 @@ namespace BackEnd.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult DeleteOneBook([FromRoute(Name = "id")] int id)
+        public async Task<IActionResult> DeleteOneBook([FromRoute(Name = "id")] int id)
         {
             try
             {
                 _logger.LogInfo($"Deleting book with id: {id}");
-                var entity = _manager.BookService.GetOneBookById(id, true);
+                var entity = await _manager.BookService.GetOneBookByIdAsync(id, true);
 
                 if (entity is null)
                 {
                     _logger.LogWarn($"Book with id {id} not found for deletion");
                     return NotFound();
                 }
-                _manager.BookService.DeleteOneBook(id, true);
+                await _manager.BookService.DeleteOneBookAsync(id, true);
                 _logger.LogInfo($"Book with id {id} deleted successfully");
                 return NoContent();
             }
@@ -129,21 +129,23 @@ namespace BackEnd.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public IActionResult PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
-        [FromBody] JsonPatchDocument<Book> bookPatch)
+        public async Task<IActionResult> PartiallyUpdateOneBook([FromRoute(Name = "id")] int id,
+        [FromBody] JsonPatchDocument<BookDtoForUpdate> bookPatch)
         {
             try
             {
                 _logger.LogInfo($"Partially updating book with id: {id}");
-                var entity = _manager.BookService.GetOneBookById(id, true);
+                var entity = await _manager.BookService.GetOneBookByIdAsync(id, true);
 
                 if (entity is null)
                 {
                     _logger.LogWarn($"Book with id {id} not found for partial update");
                     return NotFound();
                 }
-                bookPatch.ApplyTo(entity);
-                _manager.BookService.UpdateOneBook(id, new BookDtoForUpdate(entity.Id,entity.Title,entity.Price), true);
+
+                var bookDtoForUpdate = new BookDtoForUpdate(entity.Id, entity.Title, entity.Price);
+                bookPatch.ApplyTo(bookDtoForUpdate);
+                await _manager.BookService.UpdateOneBookAsync(id, bookDtoForUpdate, true);
                 _logger.LogInfo($"Book with id {id} partially updated successfully");
                 return NoContent();
             }
