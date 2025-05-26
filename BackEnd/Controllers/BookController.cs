@@ -8,6 +8,7 @@ using BackEnd.Services.Contracts;
 using BackEnd.DTO;
 using BackEnd.ActionFilters;
 using BackEnd.RequestFeatures;
+using System.Text.Json;
 
 namespace BackEnd.Controllers
 {
@@ -27,17 +28,9 @@ namespace BackEnd.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
-            try
-            {
-                _logger.LogInfo("Getting all books");
-                var books = await _manager.BookService.GetAllBooksAsync(bookParameters,false);
-                return Ok(books);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in GetAllBooks: {ex.Message}");
-                throw new Exception(ex.Message);
-            }
+            var pagedResult=await _manager.BookService.GetAllBooksAsync(bookParameters,false);
+            Response.Headers.Add("X-Pagination",JsonSerializer.Serialize(pagedResult.metaData));
+            return Ok(pagedResult.books);
         }
 
         [HttpGet("{id:int}")]
