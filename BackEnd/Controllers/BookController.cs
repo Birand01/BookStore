@@ -60,7 +60,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOneBook([FromBody] BookDtoForInsertion bookDtoForInsertion)
+        public async Task<IActionResult> CreateOneBookAsync([FromBody] BookDtoForInsertion bookDtoForInsertion)
         {
             try
             {
@@ -70,11 +70,11 @@ namespace BackEnd.Controllers
                     _logger.LogWarn("Attempted to create null book");
                     return BadRequest();
                 }
-                var bookDto=_manager.BookService.CreateOneBookAsync(bookDtoForInsertion);
+                var bookDto=await _manager.BookService.CreateOneBookAsync(bookDtoForInsertion);
                 _logger.LogInfo($"Book created successfully with id: {bookDto.Id}");
                 return StatusCode(201, bookDto);
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 _logger.LogError($"Error in CreateOneBook: {ex.Message}");
                 throw new Exception(ex.Message);
