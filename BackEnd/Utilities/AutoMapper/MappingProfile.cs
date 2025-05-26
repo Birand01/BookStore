@@ -10,6 +10,7 @@ namespace BackEnd.Utilities.AutoMapper
         {
             CreateMap<Book, BookDto>();
             CreateMap<BookDtoForUpdate, Book>();
+            CreateMap<BookDtoForInsertion, Book>();
         }
     }
 }

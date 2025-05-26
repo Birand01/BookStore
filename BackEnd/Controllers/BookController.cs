@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Extensions;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Services.Contracts;
 using BackEnd.DTO;
+using BackEnd.ActionFilters;
 
 namespace BackEnd.Controllers
 {
@@ -60,18 +61,13 @@ namespace BackEnd.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateOneBookAsync([FromBody] BookDtoForInsertion bookDtoForInsertion)
         {
             try
             {
                 _logger.LogInfo("Creating new book");
-                if (bookDtoForInsertion is null)
-                {
-                    _logger.LogWarn("Attempted to create null book");
-                    return BadRequest();
-                }
                 var bookDto=await _manager.BookService.CreateOneBookAsync(bookDtoForInsertion);
-                _logger.LogInfo($"Book created successfully with id: {bookDto.Id}");
                 return StatusCode(201, bookDto);
             }
             catch (Exception ex) 

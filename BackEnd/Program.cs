@@ -5,6 +5,7 @@ using BackEnd.Repositories;
 using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
+using BackEnd.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,14 @@ builder.Services.AddControllers(config=>{
     config.RespectBrowserAcceptHeader=true;//accept header
     config.ReturnHttpNotAcceptable=true; //return 406 not acceptable if the client request is not acceptable
 })
-.AddCustomCsvFormatter()
-.AddXmlDataContractSerializerFormatters()
+//.AddCustomCsvFormatter()
+//.AddXmlDataContractSerializerFormatters()
 .AddNewtonsoftJson();
+
+
+builder.Services.AddScoped<ValidationFilterAttribute>();
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
