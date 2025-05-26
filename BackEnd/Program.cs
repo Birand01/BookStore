@@ -40,6 +40,9 @@ builder.Services.ConfigureServiceManager();
 // Register Logger
 builder.Services.AddSingleton<ILoggerService, LoggerManager>();
 
+// Register Cors
+builder.Services.ConfigureCors();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
@@ -53,6 +56,7 @@ if (app.Environment.IsDevelopment())
     //app.MapOpenApi();
 }
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.MapControllers();
 

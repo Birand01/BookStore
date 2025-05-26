@@ -3,10 +3,11 @@ using BackEnd.Models;
 using BackEnd.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.RequestFeatures;
+using BackEnd.Extensions;
 
 namespace BackEnd.Repositories
 {
-    public class BookRepository:RepositoryBase<Book>,IBookRepository
+    public sealed class BookRepository:RepositoryBase<Book>,IBookRepository
     {
         public BookRepository(ApplicationDbContext context):base(context){}
 
@@ -14,15 +15,21 @@ namespace BackEnd.Repositories
 
         public void DeleteOneBook(Book book)=>Delete(book);
 
-        public async Task<IEnumerable<Book>> GetAllBooksAsync(BookParameters bookParameters,bool trackChanges)=>
-        await FindAll(trackChanges)
-        .OrderBy(b=>b.Id)
-        .Skip((bookParameters.PageNumber-1)*bookParameters.PageSize)
-        .Take(bookParameters.PageSize)
-        .ToListAsync();
+        public async Task<PagedList<Book>> GetAllBooksAsync(BookParameters bookParameters,bool trackChanges)
+        {
+            var books=await FindAll(trackChanges)
+            .FilterBooks(bookParameters.MinPrice,bookParameters.MaxPrice)
+            .OrderBy(b=>b.Id)   
+            .ToListAsync();
+            return PagedList<Book>.ToPagedList(
+                books,
+                bookParameters.PageNumber,
+                bookParameters.PageSize
+            );
+        }
 
         public async Task<Book> GetOneBookByIdAsync(int id, bool trackChanges)=>
-        await FindByCondition(b=>b.Id.Equals(id),trackChanges).SingleOrDefaultAsync();
+            await FindByCondition(b=>b.Id.Equals(id),trackChanges).SingleOrDefaultAsync();
 
         public void UpdateOneBook(Book book)=>Update(book);
 
