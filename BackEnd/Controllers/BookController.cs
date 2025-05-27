@@ -14,6 +14,7 @@ namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ResponseCache(CacheProfileName = "300SecondsCache")]
     public class BookController : ControllerBase
     {
         private readonly IServiceManager _manager;
@@ -26,7 +27,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(Duration = 60)]
+        [ResponseCache(Duration = 60)] // Cache the response for 60 seconds
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
             var pagedResult=await _manager.BookService.GetAllBooksAsync(bookParameters,false);

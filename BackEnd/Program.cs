@@ -6,6 +6,7 @@ using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(config=>{
     config.RespectBrowserAcceptHeader=true;//accept header
     config.ReturnHttpNotAcceptable=false; //return 406 not acceptable if the client request is not acceptable
+    config.CacheProfiles.Add("300SecondsCache",new CacheProfile{Duration=300});
 })
 //.AddCustomCsvFormatter()
 //.AddXmlDataContractSerializerFormatters()
@@ -59,6 +61,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
+app.UseResponseCaching();
 app.UseAuthorization();
 app.MapControllers();
 
