@@ -26,6 +26,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
             var pagedResult=await _manager.BookService.GetAllBooksAsync(bookParameters,false);

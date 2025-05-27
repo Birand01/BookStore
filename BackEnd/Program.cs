@@ -40,6 +40,8 @@ builder.Services.ConfigureServiceManager();
 // Register Logger
 builder.Services.AddSingleton<ILoggerService, LoggerManager>();
 
+// Register Response Caching
+builder.Services.ConfigureResponseCaching();
 // Register Cors
 builder.Services.ConfigureCors();
 

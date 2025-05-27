@@ -37,5 +37,9 @@ namespace BackEnd.Extensions
                 .WithExposedHeaders("X-Pagination"));
             });
         }
+        public static void ConfigureResponseCaching(this IServiceCollection services)
+        {
+            services.AddResponseCaching();
+        }
     }
 }
