@@ -9,12 +9,14 @@ using BackEnd.DTO;
 using BackEnd.ActionFilters;
 using BackEnd.RequestFeatures;
 using System.Text.Json;
+using Marvin.Cache.Headers;
 
 namespace BackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ResponseCache(CacheProfileName = "300SecondsCache")]
+    //[ResponseCache(CacheProfileName = "300SecondsCache")]
+    //[HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 80)]
     public class BookController : ControllerBase
     {
         private readonly IServiceManager _manager;
@@ -27,7 +29,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(Duration = 60)] // Cache the response for 60 seconds
+        //[ResponseCache(Duration = 60)] // Cache the response for 60 seconds
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
             var pagedResult=await _manager.BookService.GetAllBooksAsync(bookParameters,false);

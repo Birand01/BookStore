@@ -3,6 +3,7 @@ using BackEnd.Repositories.Contracts;
 using BackEnd.Repositories.EFCore;
 using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
+using Marvin.Cache.Headers;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -40,6 +41,19 @@ namespace BackEnd.Extensions
         public static void ConfigureResponseCaching(this IServiceCollection services)
         {
             services.AddResponseCaching();
+        }
+        public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
+        {
+            services.AddHttpCacheHeaders(expirationOptions=>
+            {
+                expirationOptions.MaxAge=90;
+                expirationOptions.CacheLocation=CacheLocation.Public;
+
+            },
+            validationOptions=>
+            {
+                validationOptions.MustRevalidate=false;
+            });
         }
     }
 }

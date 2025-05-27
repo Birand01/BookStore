@@ -46,6 +46,8 @@ builder.Services.AddSingleton<ILoggerService, LoggerManager>();
 builder.Services.ConfigureResponseCaching();
 // Register Cors
 builder.Services.ConfigureCors();
+// Register Http Cache Headers
+builder.Services.ConfigureHttpCacheHeaders();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -62,6 +64,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseResponseCaching();
+app.UseHttpCacheHeaders();
 app.UseAuthorization();
 app.MapControllers();
 
