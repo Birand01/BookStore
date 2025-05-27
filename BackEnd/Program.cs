@@ -7,6 +7,7 @@ using BackEnd.Services.Managers;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,8 @@ builder.Services.AddMemoryCache();
 // Register Rate Limiting
 builder.Services.ConfigureRateLimiting();
 
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -69,6 +72,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     //app.MapOpenApi();
 }
+
+app.UseIpRateLimiting();
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseResponseCaching();

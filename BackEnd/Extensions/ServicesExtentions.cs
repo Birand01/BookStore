@@ -64,7 +64,7 @@ namespace BackEnd.Extensions
                 {
                     Endpoint="*", // Apply rate limit to all endpoints
                     Limit=3, // Limit to 3 requests per second
-                    Period="1s" // Per second
+                    Period="1m" // Per second
                 }
             };
             services.Configure<IpRateLimitOptions>(options=>
