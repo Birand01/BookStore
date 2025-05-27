@@ -49,6 +49,14 @@ builder.Services.ConfigureCors();
 // Register Http Cache Headers
 builder.Services.ConfigureHttpCacheHeaders();
 
+
+// Register Memory Cache
+builder.Services.AddMemoryCache();
+
+// Register Rate Limiting
+builder.Services.ConfigureRateLimiting();
+
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();

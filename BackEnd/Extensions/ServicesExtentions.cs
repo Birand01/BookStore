@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using BackEnd.Repositories;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Repositories.EFCore;
@@ -54,6 +55,26 @@ namespace BackEnd.Extensions
             {
                 validationOptions.MustRevalidate=false;
             });
+        }
+        public static void ConfigureRateLimiting(this IServiceCollection services)
+        {
+            var rateLimitRules=new List<RateLimitRule>
+            {
+                new RateLimitRule
+                {
+                    Endpoint="*", // Apply rate limit to all endpoints
+                    Limit=3, // Limit to 3 requests per second
+                    Period="1s" // Per second
+                }
+            };
+            services.Configure<IpRateLimitOptions>(options=>
+            {
+                options.GeneralRules=rateLimitRules;
+            });
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
         }
     }
 }
