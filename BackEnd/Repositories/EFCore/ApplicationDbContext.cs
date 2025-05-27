@@ -1,4 +1,6 @@
+using System.Reflection;
 using BackEnd.Models;
+using BackEnd.Repositories.Config;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +17,8 @@ namespace BackEnd.Repositories.EFCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            //modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             modelBuilder.Entity<Book>(entity =>
             {
                 entity.HasKey(e => e.Id);
