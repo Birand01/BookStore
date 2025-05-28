@@ -33,6 +33,18 @@ namespace BackEnd.Controllers
 
             return StatusCode(201);
         }
-        
+
+        [HttpPost("login")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto userForAuthenticationDto)
+        {
+            if(!await _service.AuthenticationService.ValidateUser(userForAuthenticationDto))
+            {  
+                return Unauthorized();
+            }
+            var token=await _service.AuthenticationService.CreateToken();
+            return Ok(new { Token = token });
+            
+        }
     }
 }

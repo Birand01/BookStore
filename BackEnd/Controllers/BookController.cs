@@ -30,7 +30,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "User")]
         //[ResponseCache(Duration = 60)] // Cache the response for 60 seconds
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
@@ -40,6 +40,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOneBook([FromRoute(Name = "id")] int id)
         {
             try
@@ -62,6 +63,7 @@ namespace BackEnd.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateOneBookAsync([FromBody] BookDtoForInsertion bookDtoForInsertion)
         {
             try
