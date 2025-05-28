@@ -1,3 +1,4 @@
+using System.Text;
 using AspNetCoreRateLimit;
 using BackEnd.Models;
 using BackEnd.Repositories;
@@ -6,8 +7,10 @@ using BackEnd.Repositories.EFCore;
 using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace BackEnd.Extensions
@@ -90,6 +93,29 @@ namespace BackEnd.Extensions
             });
             builder.AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+        }
+        public static void ConfigureJWT(this IServiceCollection services,IConfiguration configuration)
+        {
+            var jwtSettings=configuration.GetSection("JwtSettings");
+            var secretKey=jwtSettings["secretKey"];
+            services.AddAuthentication(options=>
+            {
+                options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options=>
+            {
+                options.TokenValidationParameters=new TokenValidationParameters
+                {
+                    ValidateIssuer=true,
+                    ValidateAudience=true,
+                    ValidateLifetime=true,
+                    ValidateIssuerSigningKey=true,
+                    ValidIssuer=jwtSettings["validIssuer"],
+                    ValidAudience=jwtSettings["validAudience"],
+                    IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
         }
     }
 }

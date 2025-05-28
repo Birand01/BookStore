@@ -65,6 +65,10 @@ builder.Services.AddHttpContextAccessor();
 // Add Identity Services
 builder.Services.ConfigureIdentity();
 
+// Add JWT Authentication
+builder.Services.ConfigureJWT(builder.Configuration);
+
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
