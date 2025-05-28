@@ -6,6 +6,8 @@ namespace BackEnd.Services.Contracts
     public interface IAuthenticationService
     {
         Task<IdentityResult> RegisterUser(UserRegistrationDto userRegistrationDto);
+        Task<bool> ValidateUser(UserForAuthenticationDto userForAuthenticationDto);
+        Task<string> CreateToken();
         
     }
 }
