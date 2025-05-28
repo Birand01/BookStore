@@ -4,9 +4,11 @@ using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using BackEnd.DTO;
+using BackEnd.Extensions;
 using BackEnd.Models;
 using BackEnd.Services.Contracts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BackEnd.Services.Managers
@@ -144,5 +146,18 @@ namespace BackEnd.Services.Managers
             }
             return principal;
         }
+
+        public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
+        {
+            var principal=GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+            var user=_userManager.Users.SingleOrDefault(u=>u.UserName==principal.Identity.Name);
+            if(user==null || user.RefreshToken!=tokenDto.RefreshToken || user.RefreshTokenExpiryTime<=DateTime.Now)
+            {
+                throw new RefreshTokenBadRequest();
+            }
+            _user=user;
+            return await CreateToken(populateExp:false); 
+        }
+
     }
 }

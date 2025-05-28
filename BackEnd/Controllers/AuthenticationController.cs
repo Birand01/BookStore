@@ -43,8 +43,16 @@ namespace BackEnd.Controllers
                 return Unauthorized();
             }
             var token=await _service.AuthenticationService.CreateToken(populateExp:true);
-            return Ok(new { Token = token });
+            return Ok(token);
             
+        }
+
+        [HttpPost("refresh")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
+        {
+            var token=await _service.AuthenticationService.RefreshToken(tokenDto);
+            return Ok(token);
         }
     }
 }
