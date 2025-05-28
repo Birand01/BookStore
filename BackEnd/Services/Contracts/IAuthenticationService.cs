@@ -7,7 +7,7 @@ namespace BackEnd.Services.Contracts
     {
         Task<IdentityResult> RegisterUser(UserRegistrationDto userRegistrationDto);
         Task<bool> ValidateUser(UserForAuthenticationDto userForAuthenticationDto);
-        Task<string> CreateToken();
+        Task<TokenDto> CreateToken(bool populateExp);
         
     }
 }

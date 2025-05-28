@@ -42,7 +42,7 @@ namespace BackEnd.Controllers
             {  
                 return Unauthorized();
             }
-            var token=await _service.AuthenticationService.CreateToken();
+            var token=await _service.AuthenticationService.CreateToken(populateExp:true);
             return Ok(new { Token = token });
             
         }
