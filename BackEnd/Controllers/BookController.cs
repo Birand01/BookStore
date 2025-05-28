@@ -10,6 +10,7 @@ using BackEnd.ActionFilters;
 using BackEnd.RequestFeatures;
 using System.Text.Json;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackEnd.Controllers
 {
@@ -29,6 +30,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         //[ResponseCache(Duration = 60)] // Cache the response for 60 seconds
         public async Task<IActionResult> GetAllBooks([FromQuery] BookParameters bookParameters)
         {
