@@ -1,10 +1,12 @@
 using AspNetCoreRateLimit;
+using BackEnd.Models;
 using BackEnd.Repositories;
 using BackEnd.Repositories.Contracts;
 using BackEnd.Repositories.EFCore;
 using BackEnd.Services.Contracts;
 using BackEnd.Services.Managers;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -75,6 +77,19 @@ namespace BackEnd.Extensions
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+        }
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            var builder=services.AddIdentity<User,IdentityRole>(options=>
+            {
+                options.Password.RequireDigit=true;
+                options.Password.RequireLowercase=false;
+                options.Password.RequireUppercase=false;
+                options.Password.RequireNonAlphanumeric=false;
+                options.Password.RequiredLength=6;
+            });
+            builder.AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
         }
     }
 }

@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BackEnd.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Identity;
+using BackEnd.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +62,8 @@ builder.Services.ConfigureRateLimiting();
 
 builder.Services.AddHttpContextAccessor();
 
+// Add Identity Services
+builder.Services.ConfigureIdentity();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

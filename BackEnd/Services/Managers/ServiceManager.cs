@@ -21,7 +21,7 @@ namespace BackEnd.Services.Managers
 
         public IBookService BookService => _bookService.Value;
 
-        public IAuthenticationService AuthenticationService => throw new NotImplementedException();
+        public IAuthenticationService AuthenticationService => _authenticationService.Value;
 
     }
 }
